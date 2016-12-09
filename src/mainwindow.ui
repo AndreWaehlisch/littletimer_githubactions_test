@@ -32,7 +32,7 @@
    <string>Little Timer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>11</x>
@@ -45,7 +45,11 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLineEdit" name="lineEdit"/>
+        <widget class="QLineEdit" name="lineEdit">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QComboBox" name="comboBox">
@@ -91,10 +95,6 @@
      </item>
     </layout>
    </widget>
-   <zorder>lineEdit</zorder>
-   <zorder>pushButton</zorder>
-   <zorder>pushButton</zorder>
-   <zorder>comboBox</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

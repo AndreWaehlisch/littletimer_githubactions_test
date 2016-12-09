@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = LittleTimer
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     simpletimer.cpp
@@ -21,9 +20,7 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-#QMAKE_CXXFLAGS +=
-
-#QMAKE_LFLAGS += -static
-#CONFIG += static
+RESOURCES += \
+    ../resource/images.qrc
 
 CONFIG += c++11

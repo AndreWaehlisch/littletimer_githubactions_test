@@ -2,26 +2,52 @@
 #include <stdexcept> // std::exception, std::invalid_argument
 #include <climits> // INT_MAX
 
+#include "ui_mainwindow.h"
 #include <QMessageBox>
 #include <QTimer>
-#include "ui_mainwindow.h"
+#include <QSystemTrayIcon>
 
 #include "simpletimer.h"
 
 SimpleTimer::SimpleTimer(const Ui::MainWindow& ui)
 {
     running = false;
+
     theLineEdit = ui.lineEdit;
     thePushButton = ui.pushButton;
     theComboBox = ui.comboBox;
+
+    theSystemTrayIcon_Icon = new QIcon(":/bell.ico");
+    theSystemTrayIcon = new QSystemTrayIcon(*theSystemTrayIcon_Icon);
+}
+
+SimpleTimer::~SimpleTimer()
+{
+    delete(theSystemTrayIcon);
+    delete(theSystemTrayIcon_Icon);
+}
+
+void SimpleTimer::startStuff()
+{
+    running = true;
+    thePushButton->setText("Stop");
+    theLineEdit->setDisabled(true);
+    theComboBox->setDisabled(true);
+    theSystemTrayIcon->show();
+}
+
+void SimpleTimer::stopStuff()
+{
+    running = false;
+    thePushButton->setText("Start");
+    theLineEdit->setDisabled(false);
+    theComboBox->setDisabled(false);
+    theSystemTrayIcon->hide();
 }
 
 void SimpleTimer::timerFired()
 {
-    running = false;
-    theLineEdit->setDisabled(false);
-    theComboBox->setDisabled(false);
-    thePushButton->setText("Start");
+    stopStuff();
     QMessageBox::information(thePushButton->parentWidget(), "Info", "TIMER FIRED!");
 }
 
@@ -29,10 +55,7 @@ void SimpleTimer::startStopTimer()
 {
     if (running)
     {
-        running = false;
-        thePushButton->setText("Start");
-        theLineEdit->setDisabled(false);
-        theComboBox->setDisabled(false);
+        stopStuff();
     }
     else
     {
@@ -86,9 +109,6 @@ void SimpleTimer::startStopTimer()
         }
 
         QTimer::singleShot(input * factor, this, SLOT(timerFired())); // convert input to msec and start a single shot timer
-        running = true;
-        thePushButton->setText("Stop");
-        theLineEdit->setDisabled(true);
-        theComboBox->setDisabled(true);
+        startStuff();
     }
 }
