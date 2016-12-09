@@ -23,7 +23,7 @@ FORMS    += mainwindow.ui
 
 #QMAKE_CXXFLAGS +=
 
-QMAKE_LFLAGS += -static
-CONFIG += static
+#QMAKE_LFLAGS += -static
+#CONFIG += static
 
 CONFIG += c++11
