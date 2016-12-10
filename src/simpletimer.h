@@ -14,21 +14,23 @@ class SimpleTimer : public QObject
         QPushButton *thePushButton;
         QLineEdit *theLineEdit;
         QComboBox *theComboBox;
+        QProgressBar *theProgressBar;
         QSystemTrayIcon *theSystemTrayIcon;
         QIcon *theSystemTrayIcon_Icon;
         QTimer *theTimer;
-
-    public:
-        bool running; // is the timer currently running?
-
-        SimpleTimer(const Ui::MainWindow& ui); // constructor
-        ~SimpleTimer(); // destructor
-        void startStopTimer(); // start or stop the timer, depending if "running" is true or false
+        QTimer *progressBarUpdateTimer;
         void startStuff(); // does stuff when timer is started (e.g. disable button)
         void stopStuff(); // does stuff when timer is stopped  (e.g. enable button)
 
+    public:
+        bool running; // is the timer currently running?
+        SimpleTimer(const Ui::MainWindow& ui); // constructor
+        ~SimpleTimer(); // destructor
+        void startStopTimer(); // start or stop the timer, depending if "running" is true or false
+
     public slots:
         void timerFired();
+        void updateProgressBar();
 };
 
 #endif // SIMPLETIMER_H

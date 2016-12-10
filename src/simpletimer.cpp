@@ -1,6 +1,7 @@
-#include <string> // std::stod
+#include <string> // std::stod, std::to_string
 #include <stdexcept> // std::exception, std::invalid_argument
 #include <climits> // INT_MAX
+#include <cmath> //lrint
 
 #include "ui_mainwindow.h"
 #include <QMessageBox>
@@ -16,20 +17,66 @@ SimpleTimer::SimpleTimer(const Ui::MainWindow& ui)
     theLineEdit = ui.lineEdit;
     thePushButton = ui.pushButton;
     theComboBox = ui.comboBox;
+    theProgressBar = ui.progressBar;
 
     theSystemTrayIcon_Icon = new QIcon(":/bell.ico");
     theSystemTrayIcon = new QSystemTrayIcon(*theSystemTrayIcon_Icon);
 
     theTimer = new QTimer(this);
-    theTimer->setSingleShot(true); // only fire once
+    theTimer->setSingleShot(true); // timer only fires once
     connect(theTimer, SIGNAL(timeout()), this, SLOT(timerFired())); // call our "timerFired" func when timer expires
+
+    progressBarUpdateTimer = new QTimer(this);
+    progressBarUpdateTimer->setSingleShot(false); // fire repeatedly
+    progressBarUpdateTimer->setInterval(1000); // fire once per second
+    connect(progressBarUpdateTimer, SIGNAL(timeout()), this, SLOT(updateProgressBar()));
 }
 
 SimpleTimer::~SimpleTimer()
 {
     delete(theSystemTrayIcon);
     delete(theSystemTrayIcon_Icon);
+    delete(progressBarUpdateTimer);
     delete(theTimer);
+}
+
+void SimpleTimer::updateProgressBar()
+{
+    // progress bar value
+    const double percent = 100.0*theTimer->remainingTime()/theTimer->interval();
+    theProgressBar->setValue((int) nearbyint(percent));
+
+    // label text
+    std::string remainingTimeString;
+    std::string factorString;
+
+    if( theTimer->remainingTime() > 60000 ) // >1min
+    {
+        std::string formatString;
+        char outputString[6]; //TODO: what does happen when output string is greater 5 chars (note that terminating null needs an array space too)? answer: should never happen, because biggest input is ~596hours~36000min
+        factorString = "min";
+
+        if( theTimer->remainingTime() > 60000*5 ) // >5min
+            formatString = "%.0f"; // for "big minutes" we just use the minute
+        else // <=5min and >1min
+            formatString = "%.1f"; // for "small minutes" we use 1 number after the decimal delimiter
+
+        int cx = std::snprintf(outputString, 6, formatString.c_str(), theTimer->remainingTime()/60000.); // convert remaining time in minutes to string
+
+        // if std::snprintf fails it returns a negative number, just use an empty string then
+        if(cx < 0)
+            outputString[0] = '\0';
+
+        remainingTimeString = outputString;
+    }
+    else
+    {
+        factorString = "sec";
+        remainingTimeString = std::to_string((int) round(theTimer->remainingTime()/1000.));
+    }
+
+    const QString text = QString::fromStdString(remainingTimeString + factorString);
+    theProgressBar->setFormat(text);
 }
 
 void SimpleTimer::startStuff()
@@ -39,17 +86,24 @@ void SimpleTimer::startStuff()
     theLineEdit->setDisabled(true);
     theComboBox->setDisabled(true);
     theSystemTrayIcon->show();
+    theProgressBar->setEnabled(true);
     theTimer->start();
+    progressBarUpdateTimer->start();
+    updateProgressBar();
 }
 
 void SimpleTimer::stopStuff()
 {
     theTimer->stop();
+    progressBarUpdateTimer->stop();
     running = false;
     thePushButton->setText("Start");
     theLineEdit->setDisabled(false);
     theComboBox->setDisabled(false);
     theSystemTrayIcon->hide();
+    theProgressBar->setEnabled(false);
+    theProgressBar->setValue(0);
+    theProgressBar->setFormat("");
 }
 
 void SimpleTimer::timerFired()
@@ -114,7 +168,7 @@ void SimpleTimer::startStopTimer()
         }
         catch(const std::exception& error)
         {
-            QMessageBox::information(thePushButton->parentWidget(), "Info", "Invalid input!");
+            QMessageBox::information(thePushButton->parentWidget(), "Info", "Invalid input! Must be a positive number, which can't be too big (max 596h).");
             return;
         }
 
