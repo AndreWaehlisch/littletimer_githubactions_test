@@ -15,7 +15,8 @@ class SimpleTimer : public QObject
         QLineEdit *theLineEdit;
         QComboBox *theComboBox;
         QSystemTrayIcon *theSystemTrayIcon;
-        QIcon * theSystemTrayIcon_Icon;
+        QIcon *theSystemTrayIcon_Icon;
+        QTimer *theTimer;
 
     public:
         bool running; // is the timer currently running?

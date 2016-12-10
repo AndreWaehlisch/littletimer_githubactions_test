@@ -19,12 +19,17 @@ SimpleTimer::SimpleTimer(const Ui::MainWindow& ui)
 
     theSystemTrayIcon_Icon = new QIcon(":/bell.ico");
     theSystemTrayIcon = new QSystemTrayIcon(*theSystemTrayIcon_Icon);
+
+    theTimer = new QTimer(this);
+    theTimer->setSingleShot(true); // only fire once
+    connect(theTimer, SIGNAL(timeout()), this, SLOT(timerFired())); // call our "timerFired" func when timer expires
 }
 
 SimpleTimer::~SimpleTimer()
 {
     delete(theSystemTrayIcon);
     delete(theSystemTrayIcon_Icon);
+    delete(theTimer);
 }
 
 void SimpleTimer::startStuff()
@@ -34,10 +39,12 @@ void SimpleTimer::startStuff()
     theLineEdit->setDisabled(true);
     theComboBox->setDisabled(true);
     theSystemTrayIcon->show();
+    theTimer->start();
 }
 
 void SimpleTimer::stopStuff()
 {
+    theTimer->stop();
     running = false;
     thePushButton->setText("Start");
     theLineEdit->setDisabled(false);
@@ -53,6 +60,7 @@ void SimpleTimer::timerFired()
 
 void SimpleTimer::startStopTimer()
 {
+    // If running: Stop timer. Else: Start timer.
     if (running)
     {
         stopStuff();
@@ -64,6 +72,7 @@ void SimpleTimer::startStopTimer()
         size_t idx = 0; // is set by "std::stod" to position of the next character in "str" after the numerical value
         unsigned long factor; // factor to convert input value to ms
 
+        // Check which conversion factor user has selected
         switch (static_cast<conversion_factor>(theComboBox->currentIndex())) {
             case conversion_factor::ms:
                 factor = 1;
@@ -82,6 +91,7 @@ void SimpleTimer::startStopTimer()
                 return;
         }
 
+        // Convert user input
         try
         {
             input = std::stod(str, &idx); // try to convert str to double
@@ -108,7 +118,7 @@ void SimpleTimer::startStopTimer()
             return;
         }
 
-        QTimer::singleShot(input * factor, this, SLOT(timerFired())); // convert input to msec and start a single shot timer
+        theTimer->setInterval(input*factor); // convert input to msec and start the (single shot) timer
         startStuff();
     }
 }
