@@ -11,12 +11,14 @@ class SimpleTimer : public QObject
     Q_OBJECT
 
     private:
+        mutable QString myFactorString; // factor string for progressbar label ("min"/"sec")
+        mutable QString myRemainingTimeString; // remaining time string for progressbar label ("6" in "6min")
         QPushButton *thePushButton;
         QLineEdit *theLineEdit;
         QComboBox *theComboBox;
         QProgressBar *theProgressBar;
-        QTimer myTimer;
-        QTimer myProgressBarUpdateTimer;
+        QTimer myTimer; // when user requests 6min countdown, this timer deals with that
+        QTimer myProgressBarUpdateTimer; // this timer fires every second and updates the progress bar
         void startStuff(); // does stuff when timer is started (e.g. disable button)
 
     public:

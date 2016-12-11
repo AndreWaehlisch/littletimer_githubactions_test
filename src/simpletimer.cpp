@@ -1,8 +1,4 @@
-#include <string> // std::stod, std::to_string
-#include <stdexcept> // std::exception, std::invalid_argument
 #include <limits> // std::numeric_limits
-#include <sstream> // std::ostringstream
-#include <iomanip> // std::setprecision, std::showpoint
 
 #include "ui_mainwindow.h"
 #include <QMessageBox>
@@ -35,45 +31,47 @@ void SimpleTimer::updateProgressBar() const
     theProgressBar->setValue((int) nearbyint(percent));
 
     // label text
-    std::string factorString;
-    std::ostringstream remainingTimeStringStream;
-    remainingTimeStringStream.setf(std::ios::fixed, std::ios::floatfield); // fixed = decimal notation (>not< scientific notation), floatfield makes sure all other flags are unset in the group
-
     if( myTimer.remainingTime() > 60000 ) // >1min
     {
-        factorString = "min";
+        myFactorString = "min";
 
         if( myTimer.remainingTime() > 60000*5 ) // >5min
-            remainingTimeStringStream << std::setprecision(0) << ceil(myTimer.remainingTime()/60000.); // for "big minutes" we just use the minute (round up to full minutes)
+        {
+            myRemainingTimeString.setNum(ceil(myTimer.remainingTime()/60000.), 'f', 0); // for "big minutes" we just use the minute (always round up to full minutes)
+        }
         else // <=5min and >1min
-            remainingTimeStringStream << std::setprecision(1) << std::showpoint << myTimer.remainingTime()/60000.; // for "small minutes" we use one number after the decimal delimiter (rounds to next 0.1 minute). "showpoint" forces the decimal point.
+            myRemainingTimeString.setNum(myTimer.remainingTime()/60000., 'f', 1); // for "small minutes" we use one number after the decimal delimiter (rounds to next 0.1 minute). "showpoint" forces the decimal point.
     }
     else
     {
-        factorString = "sec";
-        remainingTimeStringStream << std::setprecision(0) << myTimer.remainingTime()/1000.; // round to full seconds
+        myFactorString = "sec";
+        myRemainingTimeString.setNum(myTimer.remainingTime()/1000., 'f', 0); // round to full seconds
     }
 
-    theProgressBar->setFormat(QString::fromStdString(remainingTimeStringStream.str() + factorString));
+    theProgressBar->setFormat(myRemainingTimeString + myFactorString);
 }
 
 void SimpleTimer::startStuff()
 {
     running = true;
+
     thePushButton->setText("Stop");
     theLineEdit->setDisabled(true);
     theComboBox->setDisabled(true);
     theProgressBar->setEnabled(true);
+
     myTimer.start();
     myProgressBarUpdateTimer.start();
-    updateProgressBar();
+    updateProgressBar(); // ProgressBarUpdateTimer does not run until 1s after we start our stuff, so do a manual update here
 }
 
 void SimpleTimer::stopStuff()
 {
     myTimer.stop();
     myProgressBarUpdateTimer.stop();
+
     running = false;
+
     thePushButton->setText("Start");
     theLineEdit->setDisabled(false);
     theComboBox->setDisabled(false);
@@ -94,10 +92,9 @@ void SimpleTimer::startStopTimer()
         stopStuff();
     else
     {
-        const std::string str = theLineEdit->text().toStdString(); // holds the user input
-        double input = 0.; // for conversion of user input
-        size_t idx = 0; // is set by "std::stod" to position of the next character in "str" after the numerical value
+        double input; // for conversion of user input
         unsigned long factor; // factor to convert input value to ms
+        const QString inputString = theLineEdit->text(); // holds the user input
 
         // Check which conversion factor user has selected
         switch (static_cast<conversion_factor>(theComboBox->currentIndex())) {
@@ -119,31 +116,19 @@ void SimpleTimer::startStopTimer()
         }
 
         // Convert user input
-        try
+        bool conversionOkay;
+        input = inputString.toDouble(&conversionOkay); // try to convert QString to double
+
+        // Test if conversion was okay (see http://doc.qt.io/qt-5/qstring.html#toDouble) [note: if not ok, then input=0]. QTimer uses int (msec), so make sure we are in the limit of that, also check for negative numbers.
+        if(!conversionOkay || input*factor > std::numeric_limits<int>::max() || input < 0.)
         {
-            input = std::stod(str, &idx); // try to convert str to double
-
-            // if input is zero we don't have to do anything
-            if(input == 0.)
-                return;
-
-            // the conversion was okay, but after the numerical value there are some more characters (e.g. "33.0f", or even "11.3E1y"): we don't allow this.
-            if(idx < str.length())
-            {
-                throw std::invalid_argument("idx<str.length");
-            }
-
-            // QTimer uses int (msec), so make sure we are in the limit of that, also check for negative numbers
-            if(input * factor > std::numeric_limits<int>::max() || input < 0.)
-            {
-                throw std::out_of_range("out of range ");
-            }
-        }
-        catch(const std::exception& error)
-        {
-            QMessageBox::information(thePushButton->parentWidget(), "Info", "Invalid input! Must be a positive number, which can't be too big (max 596h).");
+            QMessageBox::warning(thePushButton->parentWidget(), "Info", "Invalid input! Must be a positive number, which can't be too big (max 596h).");
             return;
         }
+
+        // if input is zero we don't have to do anything
+        if(input == 0.)
+            return;
 
         myTimer.setInterval(input*factor); // convert input to msec and start the (single shot) timer
         startStuff();
