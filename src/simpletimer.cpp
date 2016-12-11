@@ -1,82 +1,59 @@
 #include <string> // std::stod, std::to_string
 #include <stdexcept> // std::exception, std::invalid_argument
-#include <climits> // INT_MAX
-#include <cmath> //lrint
+#include <limits> // std::numeric_limits
+#include <sstream> // std::ostringstream
+#include <iomanip> // std::setprecision, std::showpoint
 
 #include "ui_mainwindow.h"
 #include <QMessageBox>
-#include <QTimer>
-#include <QSystemTrayIcon>
 
 #include "simpletimer.h"
 
-SimpleTimer::SimpleTimer(const Ui::MainWindow& ui)
+SimpleTimer::SimpleTimer(const Ui::MainWindow& ui) : mySystemTray_Icon(":/bell.ico"), mySystemTray(mySystemTray_Icon), myTimer(this), myProgressBarUpdateTimer(this)
 {
     running = false;
 
+    myTimer.setSingleShot(true); // timer only fires once
+    connect(&myTimer, SIGNAL(timeout()), this, SLOT(timerFired())); // call our "timerFired" func when timer expires
+
+    myProgressBarUpdateTimer.setSingleShot(false); // fire repeatedly
+    myProgressBarUpdateTimer.setInterval(1000); // fire once per second
+    connect(&myProgressBarUpdateTimer, SIGNAL(timeout()), this, SLOT(updateProgressBar()));
+
+    // get some pointers to ui elements
     theLineEdit = ui.lineEdit;
     thePushButton = ui.pushButton;
     theComboBox = ui.comboBox;
     theProgressBar = ui.progressBar;
-
-    theSystemTrayIcon_Icon = new QIcon(":/bell.ico");
-    theSystemTrayIcon = new QSystemTrayIcon(*theSystemTrayIcon_Icon);
-
-    theTimer = new QTimer(this);
-    theTimer->setSingleShot(true); // timer only fires once
-    connect(theTimer, SIGNAL(timeout()), this, SLOT(timerFired())); // call our "timerFired" func when timer expires
-
-    progressBarUpdateTimer = new QTimer(this);
-    progressBarUpdateTimer->setSingleShot(false); // fire repeatedly
-    progressBarUpdateTimer->setInterval(1000); // fire once per second
-    connect(progressBarUpdateTimer, SIGNAL(timeout()), this, SLOT(updateProgressBar()));
-}
-
-SimpleTimer::~SimpleTimer()
-{
-    delete(theSystemTrayIcon);
-    delete(theSystemTrayIcon_Icon);
-    delete(progressBarUpdateTimer);
-    delete(theTimer);
 }
 
 void SimpleTimer::updateProgressBar()
 {
     // progress bar value
-    const double percent = 100.0*theTimer->remainingTime()/theTimer->interval();
+    const double percent = 100.0*myTimer.remainingTime()/myTimer.interval();
     theProgressBar->setValue((int) nearbyint(percent));
 
     // label text
-    std::string remainingTimeString;
     std::string factorString;
+    std::ostringstream remainingTimeStringStream;
+    remainingTimeStringStream.setf(std::ios::fixed, std::ios::floatfield); // fixed = decimal notation (>not< scientific notation), floatfield makes sure all other flags are unset in the group
 
-    if( theTimer->remainingTime() > 60000 ) // >1min
+    if( myTimer.remainingTime() > 60000 ) // >1min
     {
-        std::string formatString;
-        char outputString[6]; //TODO: what does happen when output string is greater 5 chars (note that terminating null needs an array space too)? answer: should never happen, because biggest input is ~596hours~36000min
         factorString = "min";
 
-        if( theTimer->remainingTime() > 60000*5 ) // >5min
-            formatString = "%.0f"; // for "big minutes" we just use the minute
+        if( myTimer.remainingTime() > 60000*5 ) // >5min
+            remainingTimeStringStream << std::setprecision(0) << ceil(myTimer.remainingTime()/60000.); // for "big minutes" we just use the minute (round up to full minutes)
         else // <=5min and >1min
-            formatString = "%.1f"; // for "small minutes" we use 1 number after the decimal delimiter
-
-        int cx = std::snprintf(outputString, 6, formatString.c_str(), theTimer->remainingTime()/60000.); // convert remaining time in minutes to string
-
-        // if std::snprintf fails it returns a negative number, just use an empty string then
-        if(cx < 0)
-            outputString[0] = '\0';
-
-        remainingTimeString = outputString;
+            remainingTimeStringStream << std::setprecision(1) << std::showpoint << myTimer.remainingTime()/60000.; // for "small minutes" we use one number after the decimal delimiter (rounds to next 0.1 minute). "showpoint" forces the decimal point.
     }
     else
     {
         factorString = "sec";
-        remainingTimeString = std::to_string((int) round(theTimer->remainingTime()/1000.));
+        remainingTimeStringStream << std::setprecision(0) << myTimer.remainingTime()/1000.; // round to full seconds
     }
 
-    const QString text = QString::fromStdString(remainingTimeString + factorString);
-    theProgressBar->setFormat(text);
+    theProgressBar->setFormat(QString::fromStdString(remainingTimeStringStream.str() + factorString));
 }
 
 void SimpleTimer::startStuff()
@@ -85,22 +62,22 @@ void SimpleTimer::startStuff()
     thePushButton->setText("Stop");
     theLineEdit->setDisabled(true);
     theComboBox->setDisabled(true);
-    theSystemTrayIcon->show();
+    mySystemTray.show();
     theProgressBar->setEnabled(true);
-    theTimer->start();
-    progressBarUpdateTimer->start();
+    myTimer.start();
+    myProgressBarUpdateTimer.start();
     updateProgressBar();
 }
 
 void SimpleTimer::stopStuff()
 {
-    theTimer->stop();
-    progressBarUpdateTimer->stop();
+    myTimer.stop();
+    myProgressBarUpdateTimer.stop();
     running = false;
     thePushButton->setText("Start");
     theLineEdit->setDisabled(false);
     theComboBox->setDisabled(false);
-    theSystemTrayIcon->hide();
+    mySystemTray.hide();
     theProgressBar->setEnabled(false);
     theProgressBar->setValue(0);
     theProgressBar->setFormat("");
@@ -116,9 +93,7 @@ void SimpleTimer::startStopTimer()
 {
     // If running: Stop timer. Else: Start timer.
     if (running)
-    {
         stopStuff();
-    }
     else
     {
         const std::string str = theLineEdit->text().toStdString(); // holds the user input
@@ -161,7 +136,7 @@ void SimpleTimer::startStopTimer()
             }
 
             // QTimer uses int (msec), so make sure we are in the limit of that, also check for negative numbers
-            if(input * factor > INT_MAX || input < 0.)
+            if(input * factor > std::numeric_limits<int>::max() || input < 0.)
             {
                 throw std::out_of_range("out of range ");
             }
@@ -172,7 +147,7 @@ void SimpleTimer::startStopTimer()
             return;
         }
 
-        theTimer->setInterval(input*factor); // convert input to msec and start the (single shot) timer
+        myTimer.setInterval(input*factor); // convert input to msec and start the (single shot) timer
         startStuff();
     }
 }
