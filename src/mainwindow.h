@@ -11,17 +11,16 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    public:
+        explicit MainWindow(QWidget *parent = 0);
+        ~MainWindow();
 
-private slots:
-    void on_pushButton_clicked();
+    private slots:
+        void on_pushButton_clicked() const;
+        void on_lineEdit_textEdited(const QString &arg1) const;
 
-    void on_lineEdit_textEdited(const QString &arg1);
-
-private:
-    Ui::MainWindow *ui;
+    private:
+        Ui::MainWindow *ui;
 };
 
 #endif // MAINWINDOW_H

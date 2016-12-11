@@ -9,11 +9,12 @@
 
 #include "simpletimer.h"
 
-SimpleTimer::SimpleTimer(const Ui::MainWindow& ui) : mySystemTray_Icon(":/bell.ico"), mySystemTray(mySystemTray_Icon), myTimer(this), myProgressBarUpdateTimer(this)
+SimpleTimer::SimpleTimer(const Ui::MainWindow& ui) : myTimer(this), myProgressBarUpdateTimer(this)
 {
     running = false;
 
     myTimer.setSingleShot(true); // timer only fires once
+    connect(&myTimer, SIGNAL(timeout()), this, SLOT(stopStuff())); // call our "stopStuff" func when timer expires
     connect(&myTimer, SIGNAL(timeout()), this, SLOT(timerFired())); // call our "timerFired" func when timer expires
 
     myProgressBarUpdateTimer.setSingleShot(false); // fire repeatedly
@@ -27,7 +28,7 @@ SimpleTimer::SimpleTimer(const Ui::MainWindow& ui) : mySystemTray_Icon(":/bell.i
     theProgressBar = ui.progressBar;
 }
 
-void SimpleTimer::updateProgressBar()
+void SimpleTimer::updateProgressBar() const
 {
     // progress bar value
     const double percent = 100.0*myTimer.remainingTime()/myTimer.interval();
@@ -62,7 +63,6 @@ void SimpleTimer::startStuff()
     thePushButton->setText("Stop");
     theLineEdit->setDisabled(true);
     theComboBox->setDisabled(true);
-    mySystemTray.show();
     theProgressBar->setEnabled(true);
     myTimer.start();
     myProgressBarUpdateTimer.start();
@@ -77,15 +77,13 @@ void SimpleTimer::stopStuff()
     thePushButton->setText("Start");
     theLineEdit->setDisabled(false);
     theComboBox->setDisabled(false);
-    mySystemTray.hide();
     theProgressBar->setEnabled(false);
     theProgressBar->setValue(0);
     theProgressBar->setFormat("");
 }
 
-void SimpleTimer::timerFired()
+void SimpleTimer::timerFired() const
 {
-    stopStuff();
     QMessageBox::information(thePushButton->parentWidget(), "Info", "TIMER FIRED!");
 }
 
