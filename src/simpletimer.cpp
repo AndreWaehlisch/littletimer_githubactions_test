@@ -79,7 +79,9 @@ void SimpleTimer::stopStuff()
 
 void SimpleTimer::timerFired() const
 {
-    QMessageBox::information(thePushButton->parentWidget(), "Info", "TIMER FIRED!");
+    QMessageBox msg(QMessageBox::Warning, "Info", "Timer fired!", QMessageBox::Ok, thePushButton);
+    msg.setWindowModality(Qt::WindowModal);
+    msg.exec();
 }
 
 void SimpleTimer::startStopTimer()

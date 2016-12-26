@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <simpletimer.h>
 
 namespace Ui {
 class MainWindow;
@@ -21,6 +22,7 @@ class MainWindow : public QMainWindow
 
     private:
         Ui::MainWindow *ui;
+        SimpleTimer *myTimer;
 };
 
 #endif // MAINWINDOW_H
