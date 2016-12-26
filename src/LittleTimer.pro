@@ -4,23 +4,19 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT          += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = LittleTimer
-TEMPLATE = app
+TARGET       = LittleTimer
+TEMPLATE     = app
+SOURCES     += main.cpp\
+               mainwindow.cpp \
+               simpletimer.cpp
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    simpletimer.cpp
+HEADERS     += mainwindow.h \
+               simpletimer.h
 
-HEADERS  += mainwindow.h \
-    simpletimer.h
-
-FORMS    += mainwindow.ui
-
-RESOURCES += \
-    ../resource/images.qrc
-
-CONFIG += c++11
+FORMS       += mainwindow.ui
+RESOURCES   += ../resource/images.qrc
+CONFIG      += c++11
