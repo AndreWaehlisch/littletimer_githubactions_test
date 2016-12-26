@@ -1,5 +1,6 @@
 #include <limits> // std::numeric_limits
 #include <QMessageBox>
+
 #include "simpletimer.h"
 
 SimpleTimer::SimpleTimer(const Ui::MainWindow& ui) : myTimer(this), myProgressBarUpdateTimer(this)
@@ -79,7 +80,7 @@ void SimpleTimer::stopStuff()
 
 void SimpleTimer::timerFired() const
 {
-    QMessageBox msg(QMessageBox::Warning, "Info", "Timer fired!", QMessageBox::Ok, thePushButton);
+    QMessageBox msg(QMessageBox::Warning, tr("Info"), tr("Timer fired!"), QMessageBox::Ok, thePushButton);
     msg.setWindowModality(Qt::WindowModal);
     msg.exec();
 }
@@ -110,7 +111,7 @@ void SimpleTimer::startStopTimer()
                 factor = 1000 * 60 * 60;
                 break;
             default:
-                QMessageBox::warning(thePushButton->parentWidget(), "Tool outdated", "The selected conversion factor is unknown!");
+                QMessageBox::warning(thePushButton->parentWidget(), tr("Tool outdated"), tr("The selected conversion factor is unknown!"));
                 return;
         }
 
@@ -121,7 +122,7 @@ void SimpleTimer::startStopTimer()
         // Test if conversion was okay (see http://doc.qt.io/qt-5/qstring.html#toDouble) [note: if not ok, then input=0]. QTimer uses int (msec), so make sure we are in the limit of that, also check for negative numbers.
         if(!conversionOkay || input*factor > std::numeric_limits<int>::max() || input < 0.)
         {
-            QMessageBox::warning(thePushButton->parentWidget(), "Info", "Invalid input! Must be a positive number, which can't be too big (max 596h).");
+            QMessageBox::warning(thePushButton->parentWidget(), tr("Info"), tr("Invalid input! Must be a positive number, which can't be too big (max 596h)."));
             return;
         }
 

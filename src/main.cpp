@@ -1,24 +1,24 @@
-#include "mainwindow.h"
-#include <QApplication>
 #include <QStyle>
 #include <QDesktopWidget>
+#include <QApplication>
+#include <QVector>
+
+#include "mainwindow.h"
 #include "simpletimer.h"
+
+QVector<MainWindow *> MainWindow::windowPointer_vector;
 
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(images); // init resources (needed for static build)
-    QApplication app(argc, argv);
-    MainWindow w1;
-    MainWindow w2;
+    QApplication app(argc, argv); // create the QApplication (there can only be a single one)
+    MainWindow *w = new MainWindow(); // create the first default timer window
     const QIcon mainIcon(":/bell.ico");
 
-    w1.setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, w1.size(), app.desktop()->availableGeometry())); // position window on screen center (https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen)
-    w1.setWindowIcon(mainIcon); // main icon displayed on top left of main window
-    w1.show();
-
-    w2.setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, w2.size(), app.desktop()->availableGeometry())); // position window on screen center (https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen)
-    w2.setWindowIcon(mainIcon); // main icon displayed on top left of main window
-    w2.show();
+    w->windowPointer_vector.append(w); // add the first default timer window to our list (this assigns the ID=0)
+    w->setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, w->size(), app.desktop()->availableGeometry())); // position window on screen center (https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen)
+    w->setWindowIcon(mainIcon); // main icon displayed on top left of main window
+    w->show();
 
     return app.exec();
 }
