@@ -1,8 +1,12 @@
 #ifndef SIMPLETIMER_H
 #define SIMPLETIMER_H
 
-#include "ui_mainwindow.h"
+#include <QPushButton>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QProgressBar>
 #include <QTimer>
+#include "ui_mainwindow.h"
 
 enum class conversion_factor { ms, sec, min, h };
 

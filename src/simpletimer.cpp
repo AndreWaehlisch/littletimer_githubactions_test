@@ -1,8 +1,5 @@
 #include <limits> // std::numeric_limits
-
-#include "ui_mainwindow.h"
 #include <QMessageBox>
-
 #include "simpletimer.h"
 
 SimpleTimer::SimpleTimer(const Ui::MainWindow& ui) : myTimer(this), myProgressBarUpdateTimer(this)
