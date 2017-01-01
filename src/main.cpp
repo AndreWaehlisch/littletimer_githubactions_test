@@ -1,15 +1,9 @@
-#include <QStyle>
 #include <QDesktopWidget>
-#include <QApplication>
-#include <QVector>
-
 #include "mainwindow.h"
-#include "simpletimer.h"
 
 QVector<MainWindow *> MainWindow::windowPointer_vector;
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     Q_INIT_RESOURCE(images); // init resources (needed for static build)
     QApplication app(argc, argv); // create the QApplication (there can only be a single one)
     MainWindow *w = new MainWindow(); // create the first default timer window
