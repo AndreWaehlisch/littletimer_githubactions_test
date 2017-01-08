@@ -13,6 +13,7 @@ class MainWindow : public QMainWindow {
     public:
         explicit MainWindow(QWidget *parent = Q_NULLPTR);
         ~MainWindow();
+
         static QVector<MainWindow *> windowPointer_vector; // list of "MainWindow" pointers
 
     private slots:

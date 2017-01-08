@@ -22,7 +22,7 @@ class SimpleTimer : public QObject {
         void startStuff(); // does stuff when timer is started (e.g. disable button)
 
     public:
-        bool running; // is the timer currently running?
+        bool running; // if the timer is currently running
         SimpleTimer(const Ui::MainWindow& ui, QMainWindow &mainwindow); // constructor
         void startStopTimer(); // start or stop the timer, depending if "running" is true or false
 

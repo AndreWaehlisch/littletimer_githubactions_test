@@ -32,8 +32,9 @@ void SimpleTimer::updateProgressBar() const {
 
         if(myTimer.remainingTime() > 60000 * 5) { // >5min
             myRemainingTimeString.setNum(ceil(myTimer.remainingTime() / 60000.), 'f', 0); // for "big minutes" we just use the minute (always round up to full minutes)
-        } else // <=5min and >1min
+        } else { // <=5min and >1min
             myRemainingTimeString.setNum(myTimer.remainingTime() / 60000., 'f', 1); // for "small minutes" we use one number after the decimal delimiter (rounds to next 0.1 minute). "showpoint" forces the decimal point.
+        }
     } else {
         myFactorString = "sec";
         myRemainingTimeString.setNum(myTimer.remainingTime() / 1000., 'f', 0); // round to full seconds
@@ -45,7 +46,7 @@ void SimpleTimer::updateProgressBar() const {
 void SimpleTimer::startStuff() {
     running = true;
 
-    thePushButton->setText("Stop");
+    thePushButton->setText(tr("Stop"));
     theLineEdit->setDisabled(true);
     theComboBox->setDisabled(true);
     theProgressBar->setEnabled(true);
@@ -61,7 +62,7 @@ void SimpleTimer::stopStuff() {
 
     running = false;
 
-    thePushButton->setText("Start");
+    thePushButton->setText(tr("Start"));
     theLineEdit->setDisabled(false);
     theComboBox->setDisabled(false);
     theProgressBar->setEnabled(false);
@@ -77,10 +78,9 @@ void SimpleTimer::timerFired() const {
 
 void SimpleTimer::startStopTimer() {
     // If running: Stop timer. Else: Start timer.
-    if(running)
+    if(running) {
         stopStuff();
-    else {
-        double input; // for conversion of user input
+    } else {
         unsigned long factor; // factor to convert input value to ms
         const QString inputString = theLineEdit->text(); // holds the user input
 
@@ -109,7 +109,7 @@ void SimpleTimer::startStopTimer() {
 
         // Convert user input
         bool conversionOkay;
-        input = inputString.toDouble(&conversionOkay); // try to convert QString to double
+        const double input = inputString.toDouble(&conversionOkay); // try to convert user input QString to double
 
         // Test if conversion was okay (see http://doc.qt.io/qt-5/qstring.html#toDouble) [note: if not ok, then input=0]. QTimer uses int (msec), so make sure we are in the limit of that, also check for negative numbers.
         if(!conversionOkay || input * factor > std::numeric_limits<int>::max() || input < 0.) {
@@ -118,8 +118,9 @@ void SimpleTimer::startStopTimer() {
         }
 
         // if input is zero we don't have to do anything
-        if(input == 0.)
+        if(input == 0.) {
             return;
+        }
 
         myTimer.setInterval(input * factor); // convert input to msec and start the (single shot) timer
         startStuff();
