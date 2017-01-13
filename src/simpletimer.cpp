@@ -1,4 +1,5 @@
 #include <limits> // std::numeric_limits
+#include <cmath> // ceil, nearbyint
 #include <QMessageBox>
 #include "simpletimer.h"
 
