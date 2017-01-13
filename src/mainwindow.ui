@@ -32,7 +32,7 @@
    <string>Little Timer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -79,13 +79,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>42</width>
+           <width>48</width>
            <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>42</width>
+           <width>48</width>
            <height>20</height>
           </size>
          </property>
@@ -130,13 +130,13 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>110</width>
+           <width>100</width>
            <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>110</width>
+           <width>100</width>
            <height>20</height>
           </size>
          </property>
