@@ -67,6 +67,9 @@
          <property name="text">
           <string/>
          </property>
+         <property name="maxLength">
+          <number>10</number>
+         </property>
         </widget>
        </item>
        <item>

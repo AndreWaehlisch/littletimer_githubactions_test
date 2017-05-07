@@ -72,7 +72,7 @@ void SimpleTimer::stopStuff() {
 }
 
 void SimpleTimer::timerFired() const {
-    QMessageBox msg(QMessageBox::Warning, tr("Attention"), tr("Timer fired: ") + theMainWindow->windowTitle(), QMessageBox::Ok, thePushButton);
+    QMessageBox msg(QMessageBox::Warning, tr("Attention"), tr("Alarm: ") + theMainWindow->windowTitle(), QMessageBox::Ok, thePushButton);
     msg.setWindowModality(Qt::WindowModal);
     msg.exec();
 }
