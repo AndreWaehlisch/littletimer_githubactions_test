@@ -4,6 +4,8 @@
 #include <QTimer>
 #include "ui_mainwindow.h"
 
+static const QString PROGRAM_ICON = ":/hourglass.ico";
+
 enum class conversion_factor { ms, sec, min, h };
 
 class SimpleTimer : public QObject {

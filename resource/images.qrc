@@ -1,6 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-	<!-- image source: https://openclipart.org/detail/15483/alarm-clock -->
-    <file>bell.ico</file>
+        <!-- image source: https://openclipart.org/detail/229166/sandless-hourglass -->
+    <file>hourglass.ico</file>
 </qresource>
 </RCC>

@@ -36,7 +36,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 }
 
 void MainWindow::on_pushButton_2_clicked() const {
-    static const QIcon mainIcon(":/bell.ico");
+    static const QIcon mainIcon(PROGRAM_ICON);
     QString tempWindowTitle = tr("Little Timer ") + QString::number(windowPointer_vector.size());
 
     if(QGuiApplication::keyboardModifiers() && Qt::ShiftModifier) {
