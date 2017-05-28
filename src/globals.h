@@ -5,7 +5,7 @@
 
 #include <QIcon>
 
-extern const QIcon *THE_ICON;
-extern QVector<MainWindow *> *THE_WINDOWPOINTER_VECTOR; // (pointer to) list of "MainWindow" pointers
+extern const QIcon *THE_ICON; // pointer to const QIcon
+extern unsigned int THE_WINDOW_ID; // ascending ID of each MainWindow, starting with 0
 
 #endif // GLOBALS_H

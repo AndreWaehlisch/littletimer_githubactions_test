@@ -24,7 +24,7 @@ class SimpleTimer : public QObject {
 
     public:
         bool running; // if the timer is currently running
-        SimpleTimer(const Ui::MainWindow& ui, QMainWindow &mainwindow); // constructor
+        SimpleTimer(const Ui::MainWindow * const ui, QMainWindow * const mainwindow); // constructor
         void startStopTimer(); // start or stop the timer, depending if "running" is true or false
 
     public slots:

@@ -6,7 +6,7 @@
 #include <QMessageBox>
 
 
-SimpleTimer::SimpleTimer(const Ui::MainWindow& ui, QMainWindow& mainwindow) : myTimer(this), myProgressBarUpdateTimer(this) {
+SimpleTimer::SimpleTimer(const Ui::MainWindow * const ui, QMainWindow * const mainwindow) : myTimer(this), myProgressBarUpdateTimer(this) {
     running = false;
 
     myTimer.setSingleShot(true); // timer only fires once
@@ -18,11 +18,11 @@ SimpleTimer::SimpleTimer(const Ui::MainWindow& ui, QMainWindow& mainwindow) : my
     connect(&myProgressBarUpdateTimer, SIGNAL(timeout()), this, SLOT(updateProgressBar()));
 
     // get some pointers to ui elements
-    theMainWindow = &mainwindow;
-    theLineEdit = ui.lineEdit;
-    thePushButton = ui.pushButton;
-    theComboBox = ui.comboBox;
-    theProgressBar = ui.progressBar;
+    theMainWindow = mainwindow;
+    theLineEdit = ui->lineEdit;
+    thePushButton = ui->pushButton;
+    theComboBox = ui->comboBox;
+    theProgressBar = ui->progressBar;
 }
 
 void SimpleTimer::updateProgressBar() const {
