@@ -1,7 +1,10 @@
+#include "simpletimer.h"
+
 #include <limits> // std::numeric_limits
 #include <cmath> // ceil, nearbyint
+
 #include <QMessageBox>
-#include "simpletimer.h"
+
 
 SimpleTimer::SimpleTimer(const Ui::MainWindow& ui, QMainWindow& mainwindow) : myTimer(this), myProgressBarUpdateTimer(this) {
     running = false;

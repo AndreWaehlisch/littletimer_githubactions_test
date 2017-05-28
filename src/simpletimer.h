@@ -1,10 +1,9 @@
 #ifndef SIMPLETIMER_H
 #define SIMPLETIMER_H
 
-#include <QTimer>
 #include "ui_mainwindow.h"
 
-static const QString PROGRAM_ICON = ":/hourglass.ico";
+#include <QTimer>
 
 enum class conversion_factor { ms, sec, min, h };
 
