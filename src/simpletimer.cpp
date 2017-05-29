@@ -1,12 +1,12 @@
-#include "simpletimer.h"
-
 #include <limits> // std::numeric_limits
 #include <cmath> // ceil, nearbyint
 
+#include "simpletimer.h"
+#include "mainwindow.h"
+
 #include <QMessageBox>
 
-
-SimpleTimer::SimpleTimer(const Ui::MainWindow * const ui, QMainWindow * const mainwindow) : myTimer(this), myProgressBarUpdateTimer(this) {
+SimpleTimer::SimpleTimer(const Ui::MainWindow * const ui, MainWindow * const mainwindow) : myTimer(this), myProgressBarUpdateTimer(this) {
     running = false;
 
     myTimer.setSingleShot(true); // timer only fires once
@@ -15,7 +15,7 @@ SimpleTimer::SimpleTimer(const Ui::MainWindow * const ui, QMainWindow * const ma
 
     myProgressBarUpdateTimer.setSingleShot(false); // fire repeatedly
     myProgressBarUpdateTimer.setInterval(1000); // fire once per second
-    connect(&myProgressBarUpdateTimer, SIGNAL(timeout()), this, SLOT(updateProgressBar()));
+    connect(&myProgressBarUpdateTimer, SIGNAL(timeout()), this, SLOT(updateProgressBar())); // on every "tick" update the progress bar
 
     // get some pointers to ui elements
     theMainWindow = mainwindow;
@@ -25,6 +25,7 @@ SimpleTimer::SimpleTimer(const Ui::MainWindow * const ui, QMainWindow * const ma
     theProgressBar = ui->progressBar;
 }
 
+// update the progress bar (every second), called by our myProgressBarUpdateTimer, also update the tray icon tooltip (if tray icon is visible)
 void SimpleTimer::updateProgressBar() const {
     // progress bar value
     const double percent = 100.0 * myTimer.remainingTime() / myTimer.interval();
@@ -45,6 +46,11 @@ void SimpleTimer::updateProgressBar() const {
     }
 
     theProgressBar->setFormat(myRemainingTimeString + myFactorString);
+
+    // update tray icon tooltip
+    if(theMainWindow->myTray->isVisible()) {
+        theMainWindow->myTray->setToolTip(tr("Time left: ") + myRemainingTimeString + myFactorString);
+    }
 }
 
 void SimpleTimer::startStuff() {
@@ -57,7 +63,7 @@ void SimpleTimer::startStuff() {
 
     myTimer.start();
     myProgressBarUpdateTimer.start();
-    updateProgressBar(); // ProgressBarUpdateTimer does not run until 1s after we start our stuff, so do a manual update here
+    updateProgressBar(); // ProgressBarUpdateTimer does not run until 1sec after we start our stuff, so do a manual update here
 }
 
 void SimpleTimer::stopStuff() {
@@ -75,6 +81,10 @@ void SimpleTimer::stopStuff() {
 }
 
 void SimpleTimer::timerFired() const {
+    theMainWindow->myTray->setToolTip(""); // remove tray tooltip
+    theMainWindow->showNormal(); // restore window
+
+    // actual warning that timer fired for user:
     QMessageBox msg(QMessageBox::Warning, tr("Attention"), tr("Alarm: ") + theMainWindow->windowTitle(), QMessageBox::Ok, thePushButton);
     msg.setWindowModality(Qt::WindowModal);
     msg.exec();

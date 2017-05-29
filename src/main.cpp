@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "globals.h"
 
 #include <QDesktopWidget>
 
@@ -15,8 +14,6 @@ int main(int argc, char *argv[]) {
     THE_ICON = &mainIcon;
 
     MainWindow *w = new MainWindow(); // create the first default timer window
-    w->setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, w->size(), app.desktop()->availableGeometry())); // position window on screen center (https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen)
-    w->setWindowIcon(mainIcon); // main icon displayed on top left of main window
     w->show();
 
     return app.exec();

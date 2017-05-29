@@ -1,9 +1,11 @@
 #ifndef SIMPLETIMER_H
 #define SIMPLETIMER_H
 
+#include <QTimer>
+
 #include "ui_mainwindow.h"
 
-#include <QTimer>
+class MainWindow;
 
 enum class conversion_factor { ms, sec, min, h };
 
@@ -13,7 +15,7 @@ class SimpleTimer : public QObject {
     private:
         mutable QString myFactorString; // factor string for progressbar label ("min"/"sec")
         mutable QString myRemainingTimeString; // remaining time string for progressbar label ("6" in "6min")
-        QMainWindow *theMainWindow;
+        MainWindow *theMainWindow;
         QPushButton *thePushButton;
         QLineEdit *theLineEdit;
         QComboBox *theComboBox;
@@ -24,7 +26,7 @@ class SimpleTimer : public QObject {
 
     public:
         bool running; // if the timer is currently running
-        SimpleTimer(const Ui::MainWindow * const ui, QMainWindow * const mainwindow); // constructor
+        SimpleTimer(const Ui::MainWindow * const ui, MainWindow * const mainwindow); // constructor
         void startStopTimer(); // start or stop the timer, depending if "running" is true or false
 
     public slots:

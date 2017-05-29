@@ -1,8 +1,6 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include "mainwindow.h"
-
 #include <QIcon>
 
 extern const QIcon *THE_ICON; // pointer to const QIcon
