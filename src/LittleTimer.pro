@@ -16,7 +16,7 @@ SOURCES     += main.cpp\
 
 HEADERS     += mainwindow.h \
                simpletimer.h \
-    globals.h
+               globals.h
 
 FORMS       += mainwindow.ui
 RESOURCES   += ../resource/images.qrc

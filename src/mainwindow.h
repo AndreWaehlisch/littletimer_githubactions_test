@@ -34,6 +34,8 @@ class MainWindow : public QMainWindow {
         SimpleTimer *myTimer;
         QMenu *myTrayMenu;
         bool isClosed = false;
+        static unsigned long currentNumWindows;
+        static unsigned long theWindowID;
 };
 
 #endif // MAINWINDOW_H
