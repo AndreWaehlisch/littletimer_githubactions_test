@@ -1,4 +1,3 @@
-#include "globals.h"
 #include "mainwindow.h"
 #include "simpletimer.h"
 
@@ -8,6 +7,7 @@
 // initializing static members
 long unsigned MainWindow::currentNumWindows = 0; // current active number of windows, if this drops to 0 we close the application
 long unsigned MainWindow::theWindowID = 0; // ascending ID of each MainWindow, starting with 0
+const QIcon MainWindow::theIcon = QIcon(":/hourglass.ico");
 
 MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     theWindowID++;
@@ -23,7 +23,7 @@ MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindo
     myTrayMenu->addAction(tr("Create new timer"), this, &MainWindow::pushButton_2_clicked);
     myTrayMenu->addAction(tr("Close timer"), this, &MainWindow::close);
 
-    myTray = new QSystemTrayIcon(*THE_ICON); // create a QSystemTrayIcon, which will be shown when the window is minimized
+    myTray = new QSystemTrayIcon(theIcon); // create a QSystemTrayIcon, which will be shown when the window is minimized
     myTray->setContextMenu(myTrayMenu);
 
     connect(myTray, &QSystemTrayIcon::activated, this, &MainWindow::tray_clicked); // show menu on (right) click
@@ -33,7 +33,7 @@ MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindo
 
     this->setWindowTitle(windowTitle);
     this->setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, this->size(), qApp->desktop()->availableGeometry())); // position window on screen center (https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen)
-    this->setWindowIcon(*THE_ICON); // main icon displayed on top left of main window
+    this->setWindowIcon(theIcon); // main icon displayed on top left of main window
     this->setAttribute(Qt::WA_DeleteOnClose, true); // make sure windows get deleted when they are closed
 }
 
@@ -91,7 +91,7 @@ void MainWindow::pushButton_2_clicked() const {
         dialog.setWindowTitle(tr("Custom Name"));
         dialog.setLabelText(tr("Set the name of the new timer:"));
         dialog.setTextValue(tempWindowTitle);
-        dialog.setWindowIcon(*THE_ICON);
+        dialog.setWindowIcon(theIcon);
 
         if(dialog.exec() == QDialog::Accepted) {
             tempWindowTitle = dialog.textValue();

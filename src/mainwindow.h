@@ -36,6 +36,7 @@ class MainWindow : public QMainWindow {
         bool isClosed = false;
         static unsigned long currentNumWindows;
         static unsigned long theWindowID;
+        static const QIcon theIcon;
 };
 
 #endif // MAINWINDOW_H
