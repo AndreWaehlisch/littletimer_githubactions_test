@@ -20,6 +20,7 @@ MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindo
     myTrayMenu->addAction(windowTitle)->setDisabled(true); // create the first (disabled) action as a label with the default window title
     myTrayMenu->addSeparator();
     myTrayMenu->addAction(tr("Restore timer"), this, &MainWindow::showNormal);
+    myTrayMenu->addAction(tr("Create new timer"), this, &MainWindow::pushButton_2_clicked);
     myTrayMenu->addAction(tr("Close timer"), this, &MainWindow::close);
 
     myTray = new QSystemTrayIcon(*THE_ICON); // create a QSystemTrayIcon, which will be shown when the window is minimized
@@ -43,10 +44,11 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::tray_clicked(QSystemTrayIcon::ActivationReason reason) const {
-    // allow only right-click
+void MainWindow::tray_clicked(QSystemTrayIcon::ActivationReason reason) {
     if(reason == QSystemTrayIcon::Context) {
-        myTray->show();
+        myTray->show(); // show tray menu on right-click
+    } else if(reason == QSystemTrayIcon::DoubleClick) {
+        showNormal(); // restore window on double-(left)-click
     }
 }
 

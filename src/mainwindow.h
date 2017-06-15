@@ -21,7 +21,7 @@ class MainWindow : public QMainWindow {
         QSystemTrayIcon *myTray;
 
     private slots:
-        void tray_clicked(QSystemTrayIcon::ActivationReason) const;
+        void tray_clicked(QSystemTrayIcon::ActivationReason);
         void pushButton_clicked() const; // Start/Stop button
         void lineEdit_textEdited(const QString &arg1) const; // input edit field
         void pushButton_2_clicked() const; // "+" button
