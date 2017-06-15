@@ -5,8 +5,8 @@
 #include <QInputDialog>
 
 // initializing static members
-long unsigned MainWindow::currentNumWindows = 0; // current active number of windows, if this drops to 0 we close the application
-long unsigned MainWindow::theWindowID = 0; // ascending ID of each MainWindow, starting with 0
+unsigned long MainWindow::currentNumWindows = 0; // current active number of windows, if this drops to 0 we close the application
+unsigned long MainWindow::theWindowID = 0; // ascending ID of each MainWindow, starting with 0
 const QIcon MainWindow::theIcon = QIcon(":/hourglass.ico");
 
 MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -27,7 +27,7 @@ MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindo
     myTray->setContextMenu(myTrayMenu);
 
     connect(myTray, &QSystemTrayIcon::activated, this, &MainWindow::tray_clicked); // show menu on (right) click
-    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::pushButton_clicked);
+    connect(ui->pushButton, &QPushButton::clicked, myTimer, &SimpleTimer::startStopTimer);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::pushButton_2_clicked);
     connect(ui->lineEdit, &QLineEdit::textChanged, this, &MainWindow::lineEdit_textEdited);
 
@@ -50,10 +50,6 @@ void MainWindow::tray_clicked(QSystemTrayIcon::ActivationReason reason) {
     } else if(reason == QSystemTrayIcon::DoubleClick) {
         showNormal(); // restore window on double-(left)-click
     }
-}
-
-void MainWindow::pushButton_clicked() const {
-    myTimer->startStopTimer();
 }
 
 void MainWindow::lineEdit_textEdited(const QString &arg1) const {

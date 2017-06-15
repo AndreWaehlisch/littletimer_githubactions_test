@@ -27,12 +27,12 @@ class SimpleTimer : public QObject {
     public:
         bool running; // if the timer is currently running
         SimpleTimer(const Ui::MainWindow * const ui, MainWindow * const mainwindow); // constructor
-        void startStopTimer(); // start or stop the timer, depending if "running" is true or false
 
     public slots:
         void stopStuff(); // does stuff when timer is stopped  (e.g. enable button)
         void timerFired() const; // does stuff to inform user that timer has ended
         void updateProgressBar() const; // update theProgressBar continuously
+        void startStopTimer(); // start or stop the timer, depending if "running" is true or false
 };
 
 #endif // SIMPLETIMER_H
