@@ -13,13 +13,16 @@ MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindo
     myTrayMenu = new QMenu();
     myTrayMenu->addAction(windowTitle)->setDisabled(true); // create the first (disabled) action as a label with the default window title
     myTrayMenu->addSeparator();
-    myTrayMenu->addAction(tr("Restore timer"), this, SLOT(showNormal()));
-    myTrayMenu->addAction(tr("Close timer"), this, SLOT(close()));
+    myTrayMenu->addAction(tr("Restore timer"), this, &MainWindow::showNormal);
+    myTrayMenu->addAction(tr("Close timer"), this, &MainWindow::close);
 
-    myTray = new QSystemTrayIcon(*THE_ICON); // create a seperate QSystemTrayIcon, which will be shown if the window is minimized
+    myTray = new QSystemTrayIcon(*THE_ICON); // create a QSystemTrayIcon, which will be shown when the window is minimized
     myTray->setContextMenu(myTrayMenu);
 
-    connect(myTray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), myTrayMenu, SLOT(show())); // show menu on click
+    connect(myTray, &QSystemTrayIcon::activated, this, &MainWindow::tray_clicked); // show menu on (right) click
+    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::pushButton_clicked);
+    connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::pushButton_2_clicked);
+    connect(ui->lineEdit, &QLineEdit::textChanged, this, &MainWindow::lineEdit_textEdited);
 
     this->setWindowTitle(windowTitle);
     this->setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, this->size(), qApp->desktop()->availableGeometry())); // position window on screen center (https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen)
@@ -34,31 +37,39 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::on_pushButton_clicked() const {
+void MainWindow::tray_clicked(QSystemTrayIcon::ActivationReason reason) const {
+    // allow only right-click
+    if(reason == QSystemTrayIcon::Context) {
+        myTray->show();
+    }
+}
+
+void MainWindow::pushButton_clicked() const {
     myTimer->startStopTimer();
 }
 
-void MainWindow::on_lineEdit_textEdited(const QString &arg1) const {
+void MainWindow::lineEdit_textEdited(const QString &arg1) const {
     ui->pushButton->setEnabled(arg1.length() > 0); // disable pushbutton if user input is empty
 }
 
 void MainWindow::closeEvent(QCloseEvent *) {
-    // force the tray icon to close when window is closed
-    isClosed = true;
-    myTray->hide();
+    isClosed = true; // detect when window is being closed (and not just hidden)
+    myTray->hide(); // force the tray icon to close when window is closed
 }
 
 void MainWindow::hideEvent(QHideEvent *) {
     if(!isClosed) {
         myTray->show();
+        this->hide();
     }
 }
 
 void MainWindow::showEvent(QShowEvent *) {
     myTray->hide();
+    this->show();
 }
 
-void MainWindow::on_pushButton_2_clicked() const {
+void MainWindow::pushButton_2_clicked() const {
     QString tempWindowTitle = tr("Little Timer ") + QString::number(THE_WINDOW_ID);
 
     if(QGuiApplication::keyboardModifiers() && Qt::ShiftModifier) {

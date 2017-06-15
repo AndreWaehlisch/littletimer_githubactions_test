@@ -10,12 +10,12 @@ SimpleTimer::SimpleTimer(const Ui::MainWindow * const ui, MainWindow * const mai
     running = false;
 
     myTimer.setSingleShot(true); // timer only fires once
-    connect(&myTimer, SIGNAL(timeout()), this, SLOT(stopStuff())); // call our "stopStuff" func when timer expires
-    connect(&myTimer, SIGNAL(timeout()), this, SLOT(timerFired())); // call our "timerFired" func when timer expires
+    connect(&myTimer, &QTimer::timeout, this, &SimpleTimer::stopStuff); // call our "stopStuff" func when timer expires
+    connect(&myTimer, &QTimer::timeout, this, &SimpleTimer::timerFired); // call our "timerFired" func when timer expires
 
     myProgressBarUpdateTimer.setSingleShot(false); // fire repeatedly
     myProgressBarUpdateTimer.setInterval(1000); // fire once per second
-    connect(&myProgressBarUpdateTimer, SIGNAL(timeout()), this, SLOT(updateProgressBar())); // on every "tick" update the progress bar
+    connect(&myProgressBarUpdateTimer, &QTimer::timeout, this, &SimpleTimer::updateProgressBar); // on every "tick" update the progress bar
 
     // get some pointers to ui elements
     theMainWindow = mainwindow;
