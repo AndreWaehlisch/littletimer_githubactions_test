@@ -19,6 +19,7 @@ class MainWindow : public QMainWindow {
         explicit MainWindow(const QString &windowTitle = "Little Timer", QWidget *parent = Q_NULLPTR);
         ~MainWindow();
         QSystemTrayIcon *myTray;
+        static QIcon theIcon;
 
     private slots:
         void tray_clicked(QSystemTrayIcon::ActivationReason);
@@ -35,7 +36,6 @@ class MainWindow : public QMainWindow {
         bool isClosed = false;
         static unsigned long currentNumWindows;
         static unsigned long theWindowID;
-        static const QIcon theIcon;
 };
 
 #endif // MAINWINDOW_H

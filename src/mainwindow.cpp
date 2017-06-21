@@ -7,7 +7,7 @@
 // initializing static members
 unsigned long MainWindow::currentNumWindows = 0; // current active number of windows, if this drops to 0 we close the application
 unsigned long MainWindow::theWindowID = 0; // ascending ID of each MainWindow, starting with 0
-const QIcon MainWindow::theIcon = QIcon(":/hourglass.ico");
+QIcon MainWindow::theIcon; // must construct QIcon object after QMainApplication, so do just that in main.cpp
 
 MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     theWindowID++;
