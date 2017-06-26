@@ -77,6 +77,8 @@ void MainWindow::hideEvent(QHideEvent *) {
 void MainWindow::showEvent(QShowEvent *) {
     myTray->hide();
     this->show();
+    this->activateWindow();
+    this->raise();
 }
 
 void MainWindow::pushButton_2_clicked() const {
