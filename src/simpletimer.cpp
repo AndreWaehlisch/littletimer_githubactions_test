@@ -126,13 +126,8 @@ void SimpleTimer::startStopTimer() {
         const double input = inputString.toDouble(&conversionOkay); // try to convert user input QString to double
 
         // Test if conversion was okay (see http://doc.qt.io/qt-5/qstring.html#toDouble) [note: if not ok, then input=0]. QTimer uses int (msec), so make sure we are in the limit of that, also check for negative numbers.
-        if(!conversionOkay || input * factor > std::numeric_limits<int>::max() || input < 0.) {
+        if(!conversionOkay || input * factor > std::numeric_limits<int>::max() || input <= 0.) {
             QMessageBox::warning(thePushButton->parentWidget(), tr("Attention"), tr("Invalid input! Must be a positive number, which can't be too big (max 596h)."));
-            return;
-        }
-
-        // if input is zero we don't have to do anything
-        if(input == 0.) {
             return;
         }
 
