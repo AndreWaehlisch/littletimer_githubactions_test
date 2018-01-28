@@ -5,6 +5,11 @@
 
 #include "ui_mainwindow.h"
 
+#ifdef LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR
+#include <QWinTaskbarButton>
+#include <QWinTaskbarProgress>
+#endif /* LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR */
+
 class MainWindow;
 
 enum class conversion_factor { ms, sec, min, h };
@@ -22,6 +27,10 @@ class SimpleTimer : public QObject {
         QProgressBar *theProgressBar;
         QTimer myTimer; // when user requests 6min countdown, this timer deals with that
         QTimer myProgressBarUpdateTimer; // this timer fires every second and updates the progress bar
+#ifdef LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR
+        QWinTaskbarButton wintasbarbutton;
+        QWinTaskbarProgress *wintaskprogress;
+#endif /* LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR */
         void startStuff(); // does stuff when timer is started (e.g. disable button)
 
     public:

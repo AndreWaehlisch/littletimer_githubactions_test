@@ -6,6 +6,11 @@
 
 #include <QMessageBox>
 
+#ifdef LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR
+#include <QWinTaskbarButton>
+#include <QWinTaskbarProgress>
+#endif /* LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR */
+
 SimpleTimer::SimpleTimer(const Ui::MainWindow * const ui, MainWindow * const mainwindow) : myTimer(this), myProgressBarUpdateTimer(this) {
     running = false;
 
@@ -29,7 +34,12 @@ SimpleTimer::SimpleTimer(const Ui::MainWindow * const ui, MainWindow * const mai
 void SimpleTimer::updateProgressBar() const {
     // progress bar value
     const double percent = 100.0 * myTimer.remainingTime() / myTimer.interval();
-    theProgressBar->setValue((int) nearbyint(percent));
+    const int value = nearbyint(percent);
+    theProgressBar->setValue(value);
+
+#ifdef LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR
+    wintaskprogress->setValue(value);
+#endif /* LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR */
 
     // label text
     if(myTimer.remainingTime() > 60000) { // >1min
@@ -61,6 +71,18 @@ void SimpleTimer::startStuff() {
     theComboBox->setDisabled(true);
     theProgressBar->setEnabled(true);
 
+#ifdef LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR
+
+    // Init the qwintaskbarbutton. From the documentation:
+    // QWidget::windowHandle() returns a valid instance of a QWindow only after the widget has been shown. It is therefore recommended to delay the initialization of the QWinTaskbarButton instances until QWidget::showEvent().
+    if(wintasbarbutton.window() == Q_NULLPTR) {
+        wintasbarbutton.setWindow(theMainWindow->windowHandle());
+        wintaskprogress = wintasbarbutton.progress();
+    }
+
+    wintaskprogress->show();
+#endif /* LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR */
+
     myTimer.start();
     myProgressBarUpdateTimer.start();
     updateProgressBar(); // ProgressBarUpdateTimer does not run until 1sec after we start our stuff, so do a manual update here
@@ -69,6 +91,10 @@ void SimpleTimer::startStuff() {
 void SimpleTimer::stopStuff() {
     myTimer.stop();
     myProgressBarUpdateTimer.stop();
+
+#ifdef LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR
+    wintaskprogress->hide();
+#endif /* LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR */
 
     running = false;
 

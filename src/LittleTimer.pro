@@ -1,12 +1,12 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2016-11-27T07:00:10
-#
-#-------------------------------------------------
+lessThan(QT_MAJOR_VERSION, 5): error("need at least Qt version 5 to compile")
+equals(QT_MAJOR_VERSION, 5) : lessThan(QT_MINOR_VERSION, 7) : error("need at least Qt version 5.7.x to compile")
 
-QT          += core gui
+QT          += core gui widgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+qtHaveModule(winextras) {
+QT          += winextras
+DEFINES     += LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR
+}
 
 TARGET       = LittleTimer
 TEMPLATE     = app
