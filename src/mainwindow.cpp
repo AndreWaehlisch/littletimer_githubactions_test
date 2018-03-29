@@ -30,6 +30,7 @@ MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindo
     connect(ui->pushButton, &QPushButton::clicked, myTimer, &SimpleTimer::startStopTimer);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::pushButton_2_clicked);
     connect(ui->lineEdit, &QLineEdit::textChanged, this, &MainWindow::lineEdit_textEdited);
+    connect(ui->lineEdit, &QLineEdit::returnPressed, myTimer, &SimpleTimer::startStopTimer);
 
     this->setWindowTitle(windowTitle);
     this->setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, this->size(), qApp->desktop()->availableGeometry())); // position window on screen center (https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen)
