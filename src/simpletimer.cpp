@@ -59,7 +59,7 @@ void SimpleTimer::updateProgressBar() const {
 
     // update tray icon tooltip
     if(theMainWindow->myTray->isVisible()) {
-        theMainWindow->myTray->setToolTip(tr("Time left: ") + myRemainingTimeString + myFactorString);
+        theMainWindow->myTray->setToolTip(theMainWindow->windowTitle() + ": " + myRemainingTimeString + myFactorString);
     }
 }
 
