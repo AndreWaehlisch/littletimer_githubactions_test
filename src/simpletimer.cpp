@@ -131,7 +131,7 @@ void SimpleTimer::startStopTimer() {
             const QTime timeInput = QTime(captures.at(1).toInt(), captures.at(2).toInt());
 
             if(!timeInput.isValid()) {
-                QMessageBox::warning(thePushButton->parentWidget(), tr("Attention"), tr("Invalid input time."));
+                QMessageBox::warning(thePushButton->parentWidget(), tr("Attention"), tr("Invalid input time (format: HH:MM)."));
                 return;
             }
 
