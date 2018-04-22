@@ -55,6 +55,7 @@ void MainWindow::tray_clicked(QSystemTrayIcon::ActivationReason reason) {
 
 void MainWindow::lineEdit_textEdited(const QString &arg1) const {
     ui->pushButton->setEnabled(arg1.length() > 0); // disable pushbutton if user input is empty
+    ui->comboBox->setVisible(!arg1.contains(":"));
 }
 
 void MainWindow::closeEvent(QCloseEvent *) {

@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 
 #include <QMessageBox>
+#include <QTime>
 
 #ifdef LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR
 #include <QWinTaskbarButton>
@@ -121,43 +122,60 @@ void SimpleTimer::startStopTimer() {
     if(running) {
         stopStuff();
     } else {
-        unsigned long factor; // factor to convert input value to ms
         const QString inputString = theLineEdit->text(); // holds the user input
+        const QStringList captures = QRegularExpression("^(\\d{1,2}):(\\d{1,2})$").match(inputString).capturedTexts();
+        int newInterval;
 
-        // Check which conversion factor user has selected
-        switch(static_cast<conversion_factor>(theComboBox->currentIndex())) {
-            case conversion_factor::ms:
-                factor = 1;
-                break;
+        // Check if user input is a time of day or period of time
+        if(captures.length() == 3) {
+            const QTime timeInput = QTime(captures.at(1).toInt(), captures.at(2).toInt());
 
-            case conversion_factor::sec:
-                factor = 1000;
-                break;
-
-            case conversion_factor::min:
-                factor = 1000 * 60;
-                break;
-
-            case conversion_factor::h:
-                factor = 1000 * 60 * 60;
-                break;
-
-            default:
-                QMessageBox::warning(thePushButton->parentWidget(), tr("Tool outdated"), tr("The selected conversion factor is unknown!"));
+            if(!timeInput.isValid()) {
+                QMessageBox::warning(thePushButton->parentWidget(), tr("Attention"), tr("Invalid input time."));
                 return;
+            }
+
+            newInterval = abs(timeInput.msecsTo(QTime::currentTime()));
+        } else {
+            unsigned long factor; // factor to convert input value to ms
+
+            // Check which conversion factor user has selected
+            switch(static_cast<conversion_factor>(theComboBox->currentIndex())) {
+                case conversion_factor::ms:
+                    factor = 1;
+                    break;
+
+                case conversion_factor::sec:
+                    factor = 1000;
+                    break;
+
+                case conversion_factor::min:
+                    factor = 1000 * 60;
+                    break;
+
+                case conversion_factor::h:
+                    factor = 1000 * 60 * 60;
+                    break;
+
+                default:
+                    QMessageBox::warning(thePushButton->parentWidget(), tr("Tool outdated"), tr("The selected conversion factor is unknown!"));
+                    return;
+            }
+
+            // Convert user input
+            bool conversionOkay;
+            const double input = inputString.toDouble(&conversionOkay); // try to convert user input QString to double
+
+            // Test if conversion was okay (see http://doc.qt.io/qt-5/qstring.html#toDouble) [note: if not ok, then input=0]. QTimer uses int (msec), so make sure we are in the limit of that, also check for negative numbers.
+            if(!conversionOkay || input * factor > std::numeric_limits<int>::max() || input <= 0.) {
+                QMessageBox::warning(thePushButton->parentWidget(), tr("Attention"), tr("Invalid input! Must be a positive number, which can't be too big (max 596h)."));
+                return;
+            }
+
+            newInterval = (int)(input * factor);
         }
 
-        // Convert user input
-        bool conversionOkay;
-        const double input = inputString.toDouble(&conversionOkay); // try to convert user input QString to double
-
-        // Test if conversion was okay (see http://doc.qt.io/qt-5/qstring.html#toDouble) [note: if not ok, then input=0]. QTimer uses int (msec), so make sure we are in the limit of that, also check for negative numbers.
-        if(!conversionOkay || input * factor > std::numeric_limits<int>::max() || input <= 0.) {
-            QMessageBox::warning(thePushButton->parentWidget(), tr("Attention"), tr("Invalid input! Must be a positive number, which can't be too big (max 596h)."));
-            return;
-        }
-
-        myTimer.setInterval(input * factor); // convert input to msec and start the (single shot) timer
+        myTimer.setInterval(newInterval); // convert input to msec and start the (single shot) timer
         startStuff();
     }
 }
