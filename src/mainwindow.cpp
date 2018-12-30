@@ -86,7 +86,7 @@ void MainWindow::showEvent(QShowEvent *) {
 void MainWindow::pushButton_2_clicked() const {
     QString tempWindowTitle = tr("Little Timer ") + QString::number(theWindowID);
 
-    if(QGuiApplication::keyboardModifiers() && Qt::ShiftModifier) {
+    if(QGuiApplication::keyboardModifiers() & Qt::ShiftModifier) {
         QInputDialog dialog;
         dialog.setWindowTitle(tr("Custom Name"));
         dialog.setLabelText(tr("Set the name of the new timer:"));

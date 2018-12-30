@@ -35,7 +35,7 @@ SimpleTimer::SimpleTimer(const Ui::MainWindow * const ui, MainWindow * const mai
 void SimpleTimer::updateProgressBar() const {
     // progress bar value
     const double percent = 100.0 * myTimer.remainingTime() / myTimer.interval();
-    const int value = nearbyint(percent);
+    const int value = static_cast<int>(nearbyint(percent));
     theProgressBar->setValue(value);
 
 #ifdef LITTLETIMER_DO_WIN_TASKBAR_PROGRESSBAR
@@ -137,7 +137,7 @@ void SimpleTimer::startStopTimer() {
 
             newInterval = abs(timeInput.msecsTo(QTime::currentTime()));
         } else {
-            unsigned long factor; // factor to convert input value to ms
+            unsigned long factor = 0; // factor to convert input value to ms
 
             // Check which conversion factor user has selected
             switch(static_cast<conversion_factor>(theComboBox->currentIndex())) {
@@ -156,10 +156,6 @@ void SimpleTimer::startStopTimer() {
                 case conversion_factor::h:
                     factor = 1000 * 60 * 60;
                     break;
-
-                default:
-                    QMessageBox::warning(thePushButton->parentWidget(), tr("Tool outdated"), tr("The selected conversion factor is unknown!"));
-                    return;
             }
 
             // Convert user input
@@ -172,7 +168,7 @@ void SimpleTimer::startStopTimer() {
                 return;
             }
 
-            newInterval = (int)(input * factor);
+            newInterval = static_cast<int>(input * factor);
         }
 
         myTimer.setInterval(newInterval); // convert input to msec and start the (single shot) timer
