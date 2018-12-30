@@ -122,7 +122,7 @@ void SimpleTimer::startStopTimer() {
     if(running) {
         stopStuff();
     } else {
-        const QString inputString = theLineEdit->text(); // holds the user input
+        const QString inputString = theLineEdit->text().replace(',', '.'); // holds the user input
         const QStringList captures = QRegularExpression("^(\\d{1,2}):(\\d{1,2})$").match(inputString).capturedTexts();
         int newInterval;
 
