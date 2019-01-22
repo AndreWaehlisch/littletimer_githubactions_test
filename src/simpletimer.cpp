@@ -135,7 +135,12 @@ void SimpleTimer::startStopTimer() {
                 return;
             }
 
-            newInterval = abs(timeInput.msecsTo(QTime::currentTime()));
+            newInterval = -timeInput.msecsTo(QTime::currentTime());
+
+            // if timeInput is tomorrow (newInterval is negative) we need to do "24hours + newInterval"
+            if(newInterval < 0) {
+                newInterval += 24 * 60 * 60 * 1000;
+            }
         } else {
             unsigned long factor = 0; // factor to convert input value to ms
 
