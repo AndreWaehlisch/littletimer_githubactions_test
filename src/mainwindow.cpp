@@ -24,6 +24,8 @@ MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindo
     myTrayMenu->addAction(tr("Close timer"), this, &MainWindow::close);
 
     myTray = new QSystemTrayIcon(theIcon); // create a QSystemTrayIcon, which will be shown when the window is minimized
+    myTray->show(); // first call to hide() below seems to require a show() first, otherwise the tray icon is not hidden
+    myTray->hide(); // hide tray icon on creation
     myTray->setContextMenu(myTrayMenu);
 
     connect(myTray, &QSystemTrayIcon::activated, this, &MainWindow::tray_clicked); // show menu on (right) click
