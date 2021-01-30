@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "simpletimer.h"
 
-#include <QDesktopWidget>
 #include <QInputDialog>
+#include <QScreen>
 
 // initializing static members
 unsigned long MainWindow::currentNumWindows = 0; // current active number of windows, if this drops to 0 we close the application
@@ -24,7 +24,6 @@ MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindo
     myTrayMenu->addAction(tr("Close timer"), this, &MainWindow::close);
 
     myTray = new QSystemTrayIcon(theIcon); // create a QSystemTrayIcon, which will be shown when the window is minimized
-    myTray->show(); // first call to hide() below seems to require a show() first, otherwise the tray icon is not hidden
     myTray->hide(); // hide tray icon on creation
     myTray->setContextMenu(myTrayMenu);
 
@@ -35,7 +34,7 @@ MainWindow::MainWindow(const QString &windowTitle, QWidget *parent) : QMainWindo
     connect(ui->lineEdit, &QLineEdit::returnPressed, myTimer, &SimpleTimer::startStopTimer);
 
     this->setWindowTitle(windowTitle);
-    this->setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, this->size(), qApp->desktop()->availableGeometry())); // position window on screen center (https://wiki.qt.io/How_to_Center_a_Window_on_the_Screen)
+    this->move(QGuiApplication::primaryScreen()->geometry().center() - this->geometry().center()); // position window on screen center
     this->setWindowIcon(theIcon); // main icon displayed on top left of main window
     this->setAttribute(Qt::WA_DeleteOnClose, true); // make sure windows get deleted when they are closed
 }

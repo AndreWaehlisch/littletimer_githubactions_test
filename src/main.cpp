@@ -1,7 +1,5 @@
 #include "mainwindow.h"
 
-#include <QDesktopWidget>
-
 int main(int argc, char *argv[]) {
 	Q_INIT_RESOURCE(images); // init resources (needed for static build)
 	QApplication app(argc, argv); // create the QApplication (there can only be a single one)
