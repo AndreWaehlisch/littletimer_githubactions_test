@@ -71,7 +71,7 @@ void MainWindow::closeEvent(QCloseEvent *) {
 }
 
 void MainWindow::hideEvent(QHideEvent *) {
-    if(!isClosed) {
+    if(!isClosed && QSystemTrayIcon::isSystemTrayAvailable()) {
         myTray->show();
         this->hide();
     }
