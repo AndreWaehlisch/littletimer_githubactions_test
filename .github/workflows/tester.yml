@@ -17,11 +17,10 @@ jobs:
         run: |
           C:\Qt\5.15.2\mingw81_64\bin\qmake.exe src\LittleTimer.pro
           make
-      - name: Create new tag
-        id: tag_version
-        uses: VegetableGarden/beet@0.0.3
       - name: Release executable
-        uses: softprops/action-gh-release@v1
+        uses: "marvinpinto/action-automatic-releases@latest"
         with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
           files: LittleTimer
-          tag_name: ${{ steps.tag_version.newTag }}
+          automatic_release_tag: latest
