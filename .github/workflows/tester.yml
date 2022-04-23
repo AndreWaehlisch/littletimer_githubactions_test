@@ -6,12 +6,8 @@ jobs:
   build-qt-program:
     runs-on: windows-latest
     steps:
-      - run: pwd
       - name: Install Qt
         run: choco install qt5-default
       - uses: actions/checkout@v3
-      - run: ls
-      - run: mkdir build
-      - run: cd build
-      - run: C:\Qt\5.15.2\mingw81_64\bin\qmake.exe  D:\a\littletimer_githubactions_test\littletimer_githubactions_test\src\LittleTimer.pro
+      - run: ${{env.Qt5_Dir}}\qmake.exe src\LittleTimer.pro
       - run: make
