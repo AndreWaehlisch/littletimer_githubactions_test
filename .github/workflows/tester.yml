@@ -6,8 +6,7 @@ jobs:
   build-qt-program:
     runs-on: windows-latest
     steps:
-      - name: Install Qt
-        run: choco install qt5-default
+      - run: ls
       - uses: actions/checkout@v3
       - run: mkdir build
       - run: cd build
