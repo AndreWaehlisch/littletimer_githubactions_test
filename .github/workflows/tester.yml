@@ -4,7 +4,7 @@ on: push
 
 jobs:
   build-qt-program:
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
