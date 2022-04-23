@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Install Qt
-        run: choco install qt5-default
+        run: choco install -y --no-progress qt5-default
       - name: Checkout repo
         uses: actions/checkout@v3
       - name: QMake & Make
@@ -21,5 +21,6 @@ jobs:
         uses: VegetableGarden/beet@0.0.3
       - name: Release executable
         uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: LittleTimer
