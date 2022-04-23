@@ -18,9 +18,10 @@ jobs:
           C:\Qt\5.15.2\mingw81_64\bin\qmake.exe src\LittleTimer.pro
           make
       - name: Create new tag
+        id: tag_version
         uses: VegetableGarden/beet@0.0.3
       - name: Release executable
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: LittleTimer
+          tag_name: {{ tag_version.newTag }}
