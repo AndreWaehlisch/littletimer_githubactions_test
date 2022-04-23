@@ -1,0 +1,18 @@
+name: build-qt-program
+
+on: push
+
+jobs:
+  build-qt-program:
+  runs-on: windows-2019
+  steps:
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.15.2'
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_msvc2019_64'
+        dir: '${{ github.workspace }}/build/'
+    - uses: actions/checkout@v3
+    - run: mkdir test
