@@ -17,7 +17,7 @@ jobs:
         run: |
           C:\Qt\5.15.2\mingw81_64\bin\qmake.exe src\LittleTimer.pro
           make
-	  ls
+          ls
       - name: Release executable
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
