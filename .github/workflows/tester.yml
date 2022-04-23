@@ -15,4 +15,7 @@ jobs:
           arch: 'win64_msvc2019_64'
           dir: '${{ github.workspace }}/build/'
       - uses: actions/checkout@v3
-      - run: mkdir test
+      - run: mkdir build
+      - run: cd build
+      - run: qmake ../src/LittleTimer.pro
+      - run: make
