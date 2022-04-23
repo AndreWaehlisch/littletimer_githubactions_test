@@ -23,5 +23,5 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          files: LittleTimer.exe
+          files: release/LittleTimer.exe
           automatic_release_tag: latest
