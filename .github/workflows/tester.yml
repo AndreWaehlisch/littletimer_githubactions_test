@@ -1,6 +1,9 @@
 name: build-qt-program
 
-on: push
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   build-qt-program:
@@ -8,10 +11,18 @@ jobs:
     steps:
       - name: Install Qt
         run: choco install qt5-default
-      - uses: actions/checkout@v3
-      - run: C:\Qt\5.15.2\mingw81_64\bin\qmake.exe src\LittleTimer.pro
-      - run: make
-      - name: Release
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: QMake & Make
+        run: |
+          C:\Qt\5.15.2\mingw81_64\bin\qmake.exe src\LittleTimer.pro
+          make
+      - name: Create new tag
+        uses: anothrNick/github-tag-action@1.36.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+      - name: Release executable
         uses: softprops/action-gh-release@v1
         with:
           files: LittleTimer
