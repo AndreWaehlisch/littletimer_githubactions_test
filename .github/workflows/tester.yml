@@ -13,5 +13,5 @@ jobs:
       - run: make
       - name: Release
         uses: softprops/action-gh-release@v1
-	with:
-	  files: LittleTimer
+        with:
+          files: LittleTimer
