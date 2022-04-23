@@ -18,10 +18,7 @@ jobs:
           C:\Qt\5.15.2\mingw81_64\bin\qmake.exe src\LittleTimer.pro
           make
       - name: Create new tag
-        uses: anothrNick/github-tag-action@1.36.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
+        uses: VegetableGarden/beet@0.0.3
       - name: Release executable
         uses: softprops/action-gh-release@v1
         with:
